@@ -1573,12 +1573,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88b1e5819b2d6e54d837f3ef15718f66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  overlayCanvas: {fileID: 0}
+  overlayCanvas: {fileID: 1551244441}
   worldCanvas: {fileID: 349246994}
-  friendBattleCharacterPrefab: {fileID: 6821616894234896857, guid: 88b05821e9090954185dd46d59e436f4,
+  friendBattleCharacterPrefab: {fileID: 1663299746, guid: 2d48b2e7b1cd59845a96d5b3c0ad7f3c,
     type: 3}
   friendStatusUIParent: {fileID: 1558600636}
-  enemyBattleCharacterPrefab: {fileID: 5502869386604176173, guid: 62176eeef3275184790b87db6cbd772f,
+  enemyBattleCharacterPrefab: {fileID: 261096886, guid: 9ec00a1212d4af043a0091ce779440a9,
     type: 3}
   enemyStatusUIParent: {fileID: 241798168}
   selectBattleIcon: {fileID: 1001324347}

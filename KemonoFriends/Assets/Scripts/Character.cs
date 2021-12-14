@@ -5,7 +5,6 @@ using UnityEngine;
 /// <summary>
 /// シーン上に配置するキャラクター
 /// </summary>
-[RequireComponent(typeof(MeshRenderer))]
 public class Character : MonoBehaviour
 {
     /// <summary>
@@ -15,6 +14,31 @@ public class Character : MonoBehaviour
 
     [SerializeField]
     private string spell = null;
+
+    [SerializeField]
+    private MeshRenderer front = null;
+
+    [SerializeField]
+    private MeshRenderer back = null;
+
+    [SerializeField]
+    private Material materialPrefab = null;
+
+    private Material material = null;
+
+    private Material Material
+    {
+        get
+        {
+            if(this.material == null)
+            {
+                this.material = Instantiate(materialPrefab);
+                this.front.material = this.material;
+                this.back.material = this.material;
+            }
+            return this.material;
+        }
+    }
 
     /// <summary>
     /// キャラクターの名前(ファイル名用)
@@ -32,7 +56,7 @@ public class Character : MonoBehaviour
     /// <summary>
     /// キャラクターを内包する Bounds を返します。
     /// </summary>
-    public Bounds Bounds => this.GetComponent<Renderer>().bounds;
+    public Bounds Bounds => this.front.GetComponent<Renderer>().bounds;
 
     protected void Awake()
     {
@@ -42,7 +66,7 @@ public class Character : MonoBehaviour
         }
     }
 
-    protected void OnValidate()
+    protected virtual void OnValidate()
     {
         if(!string.IsNullOrEmpty(this.Spell))
         {
@@ -55,9 +79,8 @@ public class Character : MonoBehaviour
     /// </summary>
     protected void UpdateTexture()
     {
-        Material material = this.GetComponent<Renderer>().material;
-        material.shader = Shader.Find("PlaneCharacter");
-        material.SetTexture("_MainTex", GameUtility.Load<Texture>($"Image/Character/{this.Spell}/{this.Spell}"));
+        var mainTexture = Resources.Load<Texture>($"Image/Character/{this.Spell}/{this.Spell}");
+        this.Material.SetTexture("_MainTex", mainTexture);
     }
 
     /// <summary>
@@ -70,10 +93,11 @@ public class Character : MonoBehaviour
         // また transform.position はプレイヤーの中心です。
         Vector3 scale = this.transform.localScale;
         Vector3 offset = new Vector3(direction.x * scale.x, direction.y * scale.y, direction.z * scale.z);
-        Vector3 origin = this.transform.position + offset / 2 - direction * 0.1f;
+        Vector3 origin = this.transform.position - direction * 0.1f;
         Ray ray = new Ray(origin, direction);
         // 地形にのみ衝突するようにレイヤを指定する
         int layer = LayerMask.NameToLayer("Ground");
+        Debug.DrawRay(ray.origin, ray.direction * s_tolerance, Color.red, 0.1f, true);
         return Physics.Raycast(ray, s_tolerance, 1 << layer);
     }
 }

@@ -5,49 +5,35 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class Player : Character
 {
-    [SerializeField]
-    private float m_MaxMoveSpeed = 8f;
-
     /// <summary>
     /// 最大移動速度
     /// </summary>
-    public float MaxMoveSpeed { get { return m_MaxMoveSpeed; } }
-
     [SerializeField]
-    private float m_JumpSpeed = 12f;
+    private float maxMoveSpeed = 8f;
 
     /// <summary>
-    /// ジャンプ、落下スピード
-    /// </summary>
-    public float JumpSpeed { get { return m_JumpSpeed; } }
-
-    /// <summary>
-    /// 重力係数
-    /// </summary>
-    static public float Gravity = 100f;
-    /// <summary>
-    /// ジャンプ時間
+    /// ジャンプ力
     /// </summary>
     [SerializeField]
-    private float m_JumpTime = 0.15f;
+    private float jumpPower = 15f;
+
+    /// <summary>
+    /// 重力
+    /// </summary>
+    [SerializeField]
+    private float gravity = 20f;
 
     /// <summary>
     /// プレイヤーコントローラー
     /// </summary>
-    private CharacterController m_Controller = null;
-
-    /// <summary>
-    /// ジャンプ時間用のカウンタ
-    /// </summary>
-    private Count m_JumpCount = new Count();
+    private CharacterController controller = null;
 
     /// <summary>
     /// 初期化します
     /// </summary>
     private void Start()
     {
-        m_Controller = this.GetComponent<CharacterController>();
-        m_JumpCount = new Count(m_JumpTime);
+        controller = this.GetComponent<CharacterController>();
     }
 
     /// <summary>
@@ -55,12 +41,11 @@ public class Player : Character
     /// </summary>
     private void Update()
     {
-        m_JumpCount.Update();
-        Vector3 currentMoveSpeed = m_Controller.velocity;
-        bool isGrounded = m_Controller.isGrounded || IsContact(Vector3.down);
+        Vector3 currentMoveSpeed = controller.velocity;
+        bool isGrounded = controller.isGrounded || IsContact(Vector3.down);
         Jump(ref currentMoveSpeed, isGrounded);
         Move(ref currentMoveSpeed, isGrounded);
-        m_Controller.Move(currentMoveSpeed * Time.deltaTime);
+        controller.Move(currentMoveSpeed * Time.deltaTime);
     }
 
     /// <summary>
@@ -84,25 +69,9 @@ public class Player : Character
     {
         if(Input.GetButtonDown("Jump") && isGrounded)
         {
-            m_JumpCount.Start();
+            currentMoveSpeed.y = jumpPower;
         }
-        if(Input.GetButtonUp("Jump"))
-        {
-            m_JumpCount.IsStop = true;
-        }
-        bool isJumping = !m_JumpCount.IsStop && m_JumpCount.RestTime > 0.0f;
-        if(isJumping)
-        {
-            currentMoveSpeed.y = JumpSpeed;
-        }
-        else
-        {
-            currentMoveSpeed.y -= Gravity * Time.deltaTime;
-            if(currentMoveSpeed.y < -JumpSpeed)
-            {
-                currentMoveSpeed.y = -JumpSpeed;
-            }
-        }
+        currentMoveSpeed.y -= this.gravity * Time.deltaTime;
     }
 
     /// <summary>
@@ -110,12 +79,11 @@ public class Player : Character
     /// </summary>
     private void Move(ref Vector3 currentMoveSpeed, bool isGrounded)
     {
-        float x = GetAxisRaw("Horizontal") * MaxMoveSpeed;
-        float z = GetAxisRaw("Vertical") * MaxMoveSpeed;
-        Vector3 axisRowSpeed = new Vector3(x, 0, z);
-        axisRowSpeed = this.transform.TransformDirection(axisRowSpeed);
+        float x = GetAxisRaw("Horizontal");
+        float z = GetAxisRaw("Vertical");
+        Vector3 axisRowSpeed = new Vector3(x, 0, z).normalized * maxMoveSpeed;
         currentMoveSpeed.x = axisRowSpeed.x;
-        currentMoveSpeed.z = -axisRowSpeed.y;
+        currentMoveSpeed.z = axisRowSpeed.z;
     }
 
     /// <summary>

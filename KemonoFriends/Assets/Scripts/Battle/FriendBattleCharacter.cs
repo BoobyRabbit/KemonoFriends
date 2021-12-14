@@ -71,7 +71,6 @@ namespace Battle
             instance.statusUI.transform.SetParent(statusUIParent);
             instance.statusUI.transform.SetSiblingIndex(0);
             instance.statusUI.transform.localScale = Vector3.one;
-            instance.transform.rotation = Quaternion.Euler(0.0f, 180.0f, 0.0f);
             instance.UpdateTexture();
             return instance;
         }

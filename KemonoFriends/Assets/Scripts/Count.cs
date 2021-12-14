@@ -56,6 +56,16 @@ public class Count
     }
 
     /// <summary>
+    /// 計測中かどうか
+    /// </summary>
+    public bool IsPlay => this.passTime.HasValue;
+
+    /// <summary>
+    /// 目標時間が経過済みどうか
+    /// </summary>
+    public bool IsEnd => this.RestTime == 0.0f;
+
+    /// <summary>
     /// 線形補間の係数
     /// 計測開始時は 0.0f で目標時間で 1.0f を取得します。
     /// 目標時間が未設定なら 0.0f を取得します。
@@ -104,7 +114,6 @@ public class Count
     public void Reset()
     {
         this.passTime = null;
-        this.targetTime = null;
     }
 
     /// <summary>

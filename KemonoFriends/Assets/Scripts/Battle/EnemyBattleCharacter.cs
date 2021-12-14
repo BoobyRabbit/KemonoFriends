@@ -41,6 +41,7 @@ namespace Battle
         public static EnemyBattleCharacter Instantiate(EnemyBattleCharacter prefab, CharacterStatus status, Transform statusUIParent)
         {
             var instance = GameObject.Instantiate(prefab);
+            instance.transform.localScale = new Vector3(-1.0f, 1.0f, 1.0f);
             instance.status = status;
             instance.name = status.name;
             instance.group = CharacterGroup.Enemy;
